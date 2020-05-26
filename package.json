@@ -1,5 +1,5 @@
 {
-  "name": "@taro/plugins",
+  "name": "taro_plugins",
   "version": "0.0.1",
   "description": "taro插件",
   "main": "index.js",
