@@ -3,9 +3,9 @@
  */
 
 const fs = require('fs')
+const chalk = require('chalk')
 
 const initApp = (pages) => {
-  console.log('initApp pages', pages)
 
   let joinPages = ''
 
@@ -17,23 +17,20 @@ const initApp = (pages) => {
   joinPages = `    pages: [${pages}
     ],  // 主包页面声明结束 注释用于判断结束行 勿动`
   const appTemplate = fs.readFileSync('./src/app.tsx').toString().split('\n')
-  console.log('读取app.tsx模版, joinPages', joinPages)
 
   const pageLine =
     appTemplate.findIndex(item => item.indexOf('* 主包页面声明开始') > -1) + 2
   const endPageLine =
     appTemplate.findIndex(item => item.indexOf('// 主包页面声明结束') > -1) + 1
-  console.log
   appTemplate[pageLine] = joinPages
 
   const indexNum: any = []
-  appTemplate.forEach((item, index) => {
-    console.log(item)
+  for (let index = 0;index < appTemplate.length;index++) {
     if (index > pageLine && index < endPageLine) {
       appTemplate[index] = ''
       indexNum.push({})
     }
-  })
+  }
 
   // 组装模版
   const endTemplate: any = []
@@ -51,6 +48,8 @@ const initApp = (pages) => {
     fs.unlinkSync('./src/app.tsx')
   }
   fs.writeFileSync('./src/app.tsx', templateStr)
+  console.log(chalk.greenBright(chalk`✅ 初始化成功 更新入口文件 {green.bold app.tsx}
+` ))
 }
 
 export default initApp

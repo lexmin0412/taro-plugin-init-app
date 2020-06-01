@@ -1,6 +1,6 @@
 {
   "name": "taro_plugins",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "taro插件",
   "main": "index.js",
   "scripts": {
@@ -34,6 +34,7 @@
     "@types/express": "^4.17.3",
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.8",
+    "chalk": "^4.0.0",
     "jest": "^25.2.4",
     "rimraf": "^3.0.2",
     "ts-jest": "^25.3.0",

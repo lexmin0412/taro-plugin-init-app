@@ -11,7 +11,7 @@ export default (ctx, options) => {
 
     // 小程序中编译project.config.json文件
     if (process.env.TARO_ENV === 'weapp') {
-      require('./project')
+      require('./initWeapp')
     }
 
     getPages().then((pages)=>{
