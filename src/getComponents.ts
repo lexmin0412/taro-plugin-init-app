@@ -6,11 +6,11 @@ const chalk = require('chalk')
  * 示例：import { Card, TImage } from '~/components'
  */
 const checkComponent = () => {
-  console.log(chalk.yellow('开始'), '进入扫描组件插件')
+  console.log(chalk.yellow('开始 '), '进入扫描组件插件')
 
   if (fs.existsSync('./src/components/index.ts')) {
     fs.unlinkSync('./src/components/index.ts')
-    console.log(`${chalk.redBright('删除')} 旧的${chalk.greenBright('index.ts')}`)
+    console.log(`${chalk.redBright('删除 ')} 旧的${chalk.greenBright('index.ts')}`)
   }
 
   let indexLines = `/**
@@ -54,10 +54,9 @@ export {
 }`
 
   fs.writeFileSync('./src/components/index.ts', indexLines)
-  console.log(`${chalk.cyanBright('创建 ')}components/index.ts 成功
+  console.log(`${chalk.cyanBright('创建 ')}`, `components/index.ts 成功
 ${
-    chalk.dim('结束 ')
-    }组件扫描完成✅
+    chalk.blueBright('结束 ')}`, `组件扫描完成✅
 ` )
 }
 

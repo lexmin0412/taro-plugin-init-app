@@ -1,16 +1,17 @@
 const fs = require('fs')
-const chalk = require('chalk')
 
 /**
  * 扫描pages文件夹生成routes.js 即app.tsx中的pages配置项
  */
-const getPages = () => {
+const getPages = (ctx, options) => {
   return new Promise(resolve => {
-    console.log(chalk.yellow('开始'), '进入扫描页面插件')
+    const { chalk } = ctx.helper
+    const { homeRoute } = options
+    console.log(chalk.yellow('开始 '), '进入扫描页面插件')
 
     if (fs.existsSync('./src/pages/routes.js')) {
       fs.unlinkSync('./src/pages/routes.js')
-      console.log(`${chalk.redBright('删除')} 旧的${chalk.greenBright('pages/route.js')}`)
+      console.log(`${chalk.redBright('删除 ')}`, `旧的${chalk.greenBright('pages/route.js')}`)
     }
 
     let indexLines = `/**
@@ -18,7 +19,7 @@ const getPages = () => {
  */
 
 const pages = [
-  'pages/home/index',`
+  '${homeRoute}',`
     const pages: any = []
 
     const outerDirs = fs.readdirSync('./src/pages')
@@ -43,7 +44,7 @@ const pages = [
     })
 
     pages.forEach(item => {
-      if (item !== 'pages/home/index') {
+      if (item !== homeRoute) {
         indexLines = indexLines
           ? `${indexLines}
   '${item}',`
@@ -58,19 +59,18 @@ const pages = [
 module.exports = pages`
 
     let resolvePages = [
-      'pages/home/index'
+      homeRoute
     ]
     pages.forEach(element => {
-      if (element !== 'pages/home/index' ) {
+      if (element !== homeRoute ) {
         resolvePages.push(element)
       }
     });
 
     fs.writeFileSync('./src/pages/routes.js', indexLines)
-    console.log(`${chalk.cyanBright('创建 ')}pages/routes.js 成功
+    console.log(`${chalk.cyanBright('创建 ')}`, `pages/routes.js 成功
 ${
-      chalk.dim('结束 ')
-      }页面扫描完成✅
+      chalk.blueBright('结束 ')}`, `页面扫描完成✅
 `)
     resolve(resolvePages)
   })
