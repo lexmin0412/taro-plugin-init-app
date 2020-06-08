@@ -6,7 +6,7 @@ const fs = require('fs')
 const getPages = (ctx, options) => {
   return new Promise(resolve => {
     const { chalk } = ctx.helper
-    const { homeRoute, includePages } = options
+    const {homeRoute, includePages, excludePages } = options
     console.log(chalk.yellow('开始 '), '进入扫描页面插件')
 
     if (fs.existsSync('./src/pages/routes.js')) {
@@ -37,7 +37,22 @@ const pages = [
             pages.indexOf(`pages/${item}/${sliceRes}`) === -1 &&
             !['component'].includes(sliceRes)
           ) {
-            if (ctx.runOpts.platform === 'weapp' && !includePages.includes(`pages/${item}/${sliceRes}`) ) {
+            // 小程序端根据传入的配置项打包指定页面
+
+            // 有includePages时优先判断includePages
+            if (includePages) {
+              if (ctx.runOpts.platform === 'weapp' && !includePages.includes(`pages/${item}/${sliceRes}`)) {
+                return
+              }
+              pages.push(`pages/${item}/${sliceRes}`)
+              return
+            }
+            // 无includePages时判断excludePages
+            if ( excludePages ) {
+              if (ctx.runOpts.platform === 'weapp' && excludePages.includes(`pages/${item}/${sliceRes}`)) {
+                return
+              }
+              pages.push(`pages/${item}/${sliceRes}`)
               return
             }
             pages.push(`pages/${item}/${sliceRes}`)
