@@ -6,7 +6,7 @@ const fs = require('fs')
 const getPages = (ctx, options) => {
   return new Promise(resolve => {
     const { chalk } = ctx.helper
-    const {homeRoute, includePages, excludePages } = options
+    const {homeRoute, weapp, h5 } = options
     console.log(chalk.yellow('开始 '), '进入扫描页面插件')
 
     if (fs.existsSync('./src/pages/routes.js')) {
@@ -31,33 +31,80 @@ const pages = [
 
         // 去除后缀名
         innerDir.forEach(inItem => {
-          const sliceRes = inItem.slice(0, inItem.indexOf('.'))
+          const sliceRes = inItem.slice(0, inItem.indexOf('.'));
           // 去重
-          if (
-            pages.indexOf(`pages/${item}/${sliceRes}`) === -1 &&
-            !['component'].includes(sliceRes)
-          ) {
-            // 小程序端根据传入的配置项打包指定页面
-
-            // 有includePages时优先判断includePages
-            if (includePages) {
-              if (ctx.runOpts.platform === 'weapp' && !includePages.includes(`pages/${item}/${sliceRes}`)) {
-                return
+          if (pages.indexOf(`pages/${item}/${sliceRes}`) === -1 &&
+            !['component'].includes(sliceRes)) {
+            // 拼接后的路由
+            const sliceResPageRoute = `pages/${item}/${sliceRes}`;
+						/**
+						 * 小程序配置处理
+						 */
+            if (weapp && ctx.runOpts.platform === 'weapp') {
+              console.log('是小程序环境', weapp)
+              console.log('当前路由', sliceResPageRoute)
+              if (weapp.pages) {
+                const {
+                  includes,
+                  excludes
+                } = weapp.pages;
+                // 有includePages时优先判断
+                if (includes) {
+                  if (includes.includes(sliceResPageRoute)) {
+                    console.log('includePages包含了 直接push')
+                    pages.push(sliceResPageRoute);
+                    return;
+                  }
+                  return
+                }
+                if (excludes) {
+                  if (!excludes.includes(sliceResPageRoute)) {
+                    console.log('进入excludePages')
+                    pages.push(sliceResPageRoute);
+                    return;
+                  }
+                  return
+                }
+                pages.push(sliceResPageRoute);
+                return;
               }
-              pages.push(`pages/${item}/${sliceRes}`)
-              return
-            }
-            // 无includePages时判断excludePages
-            if ( excludePages ) {
-              if (ctx.runOpts.platform === 'weapp' && excludePages.includes(`pages/${item}/${sliceRes}`)) {
-                return
+              pages.push(sliceResPageRoute);
+              return;
+            } else if (h5 && ctx.runOpts.platform === 'h5') {
+							/**
+							 * h5配置处理
+							 */
+              if (h5.pages) {
+                const {
+                  includes,
+                  excludes
+                } = h5.pages;
+                // 有includePages时优先判断
+                if (includes) {
+                  if (includes.includes(sliceResPageRoute)) {
+                    console.log('includePages包含了 直接push')
+                    pages.push(sliceResPageRoute);
+                    return;
+                  }
+                  return
+                }
+                if (excludes) {
+                  if (!excludes.includes(sliceResPageRoute)) {
+                    console.log('进入excludePages')
+                    pages.push(sliceResPageRoute);
+                    return;
+                  }
+                  return
+                }
+                pages.push(sliceResPageRoute);
+                return;
               }
-              pages.push(`pages/${item}/${sliceRes}`)
-              return
+              pages.push(sliceResPageRoute);
+              return;
             }
-            pages.push(`pages/${item}/${sliceRes}`)
+            pages.push(sliceResPageRoute);
           }
-        })
+        });
       }
     })
 
