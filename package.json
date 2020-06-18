@@ -1,7 +1,7 @@
 {
   "name": "taro-plugin-init-app",
-  "version": "0.1.8",
-  "description": "taro插件",
+  "version": "0.2.0",
+  "description": "Taro应用初始化插件",
   "main": "index.js",
   "scripts": {
     "build": "npm run clean && npm run prod",
