@@ -41,8 +41,6 @@ const pages = [
 						 * 小程序配置处理
 						 */
             if (weapp && ctx.runOpts.platform === 'weapp') {
-              console.log('是小程序环境', weapp)
-              console.log('当前路由', sliceResPageRoute)
               if (weapp.pages) {
                 const {
                   includes,
@@ -51,7 +49,6 @@ const pages = [
                 // 有includePages时优先判断
                 if (includes) {
                   if (includes.includes(sliceResPageRoute)) {
-                    console.log('includePages包含了 直接push')
                     pages.push(sliceResPageRoute);
                     return;
                   }
@@ -59,7 +56,6 @@ const pages = [
                 }
                 if (excludes) {
                   if (!excludes.includes(sliceResPageRoute)) {
-                    console.log('进入excludePages')
                     pages.push(sliceResPageRoute);
                     return;
                   }
@@ -82,7 +78,6 @@ const pages = [
                 // 有includePages时优先判断
                 if (includes) {
                   if (includes.includes(sliceResPageRoute)) {
-                    console.log('includePages包含了 直接push')
                     pages.push(sliceResPageRoute);
                     return;
                   }
@@ -90,7 +85,6 @@ const pages = [
                 }
                 if (excludes) {
                   if (!excludes.includes(sliceResPageRoute)) {
-                    console.log('进入excludePages')
                     pages.push(sliceResPageRoute);
                     return;
                   }
