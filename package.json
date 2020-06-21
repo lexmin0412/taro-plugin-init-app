@@ -1,6 +1,6 @@
 {
   "name": "taro-plugin-init-app",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Taro应用初始化插件",
   "main": "index.js",
   "scripts": {
