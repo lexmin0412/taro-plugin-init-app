@@ -89,7 +89,7 @@ const handleH5Filter = (h5, ctx, pages, path) => {
  */
 const handlePurifyArr = (weapp, h5, ctx, pages, subPackageItem, path) => {
   // 去重
-  if (pages.indexOf(path) === -1) {
+  if (pages.indexOf(path) === -1 && path) {
     // 拼接后的路由
     const sliceResPageRoute = path;
 
