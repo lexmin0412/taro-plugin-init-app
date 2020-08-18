@@ -37,6 +37,7 @@ const pages = [
             !['component'].includes(sliceRes)) {
             // 拼接后的路由
             const sliceResPageRoute = `pages/${item}/${sliceRes}`;
+            console.log(chalk.magentaBright('读取 '), `发现页面 ${sliceResPageRoute}`);
 						/**
 						 * 小程序配置处理
 						 */

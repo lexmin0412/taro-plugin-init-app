@@ -32,6 +32,7 @@ const checkComponent = () => {
       const sliceRes = inItem.slice(0, inItem.indexOf('.'))
       // 去重
       if (newLines.indexOf(sliceRes) === -1) {
+        console.log(chalk.magentaBright('读取 '), `发现组件 ${sliceRes}`);
         newLines.push(sliceRes)
         Names = Names
           ? `${Names}
