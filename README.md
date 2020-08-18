@@ -120,3 +120,61 @@ const config = {
   ]
 }
 ```
+
+### 指定小程序分包文件夹
+
+支持 `includes` 和 `excludes` 配置，注意 `includes` 优先级较高，当 `includes` 和 `excludes` 同时存在时会忽略 `excludes` 配置。
+
+```js
+const plugins = [
+  [
+    // 入口文件初始化插件
+    'taro-plugin-init-app',
+    {
+      // 配置首页路由
+      homeRoute: 'pages/home/index',
+      subPackages: {
+        // 不纳入分包的文件夹
+        // excludes: [
+        //  'assets',
+        //  'components',
+        //  'constants',
+        //  'enums',
+        //  'interceptors',
+        //  'lib',
+        //  'pages',
+        //  'services',
+        //  'store',
+        //  'styles',
+        //  'utils',
+        //  'tencent-webim',
+        // ],
+        // 指定作为分包打包的文件夹
+        includes: [
+          'activity',
+          'address',
+          'assemble',
+          'cart',
+          'classify',
+          'common',
+          'couponCenter',
+          'demo',
+          'dm',
+          'goods',
+          'integral-mall',
+          'live',
+          'marketing',
+          'medicalUser',
+          'order',
+          'platform',
+          'prescription',
+          'register',
+          'shop',
+          'userCenter',
+          'webview'
+        ]
+      },
+    },
+  ],
+]
+```
