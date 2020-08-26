@@ -95,11 +95,11 @@ const handlePurifyArr = (weapp, h5, ctx, pages, subPackageItem, path) => {
 
     subPackageItem = subPackageItem
 
-    if ((weapp && ctx.runOpts.platform === 'weapp') || (h5 && ctx.runOpts.platform === 'h5')) {
-      handleMPFilter(weapp, ctx, pages, sliceResPageRoute)
-      handleH5Filter(h5, ctx, pages, sliceResPageRoute)
-      return
-    }
+    // if ((weapp && ctx.runOpts.platform === 'weapp') || (h5 && ctx.runOpts.platform === 'h5')) {
+    //   handleMPFilter(weapp, ctx, pages, sliceResPageRoute)
+    //   handleH5Filter(h5, ctx, pages, sliceResPageRoute)
+    //   return
+    // }
 
     pages.push(sliceResPageRoute);
   }
