@@ -7,77 +7,23 @@ const isDirectory = (path) => {
   return fs.lstatSync(path).isDirectory()
 }
 
-// /**
-//  * 小程序配置过滤
-//  */
-// const handleMPFilter = (weapp, ctx, pages, path) => {
-// 	/**
-// 	 * 小程序配置处理
-// 	 */
-//   if (weapp && ctx.runOpts.platform === 'weapp') {
-//     if (weapp.pages) {
-//       const {
-//         includes,
-//         excludes
-//       } = weapp.pages;
-//       // 有includePages时优先判断
-//       if (includes) {
-//         if (includes.includes(path)) {
-//           pages.push(path);
-//           return;
-//         }
-//         return;
-//       }
-//       if (excludes) {
-//         if (!excludes.includes(path)) {
-//           pages.push(path);
-//           return;
-//         }
-//         return;
-//       }
-//       pages.push(path);
-//       return;
-//     }
-//     pages.push(path);
-//     return;
-//   }
-// }
-
-// /**
-//  * h5配置过滤
-//  */
-// const handleH5Filter = (h5, ctx, pages, path) => {
-//   if (h5 && ctx.runOpts.platform === 'h5') {
-// 		/**
-// 		 * h5配置处理
-// 		 */
-//     if (h5.pages) {
-//       const {
-//         includes,
-//         excludes
-//       } = h5.pages;
-//       // 有includePages时优先判断
-//       if (includes) {
-//         if (includes.includes(path)) {
-//           pages.push(path);
-//           return;
-//         }
-//         return;
-//       }
-//       if (excludes) {
-//         if (!excludes.includes(path)) {
-//           pages.push(path);
-//           return;
-//         }
-//         return;
-//       }
-//       pages.push(path);
-//       return;
-//     }
-//     pages.push(path);
-//     return;
-//   }
-// }
+/**
+ * 需要过滤的文件夹
+ */
+const filterDirs = [
+  'assets', 
+  'components', 
+  'constants',
+  'component',
+  'enums',
+  'css', 
+  'interceptors',
+  'interface',
+  'lib',
+  'services', 
+  'styles',
+  'utils'
+]
 
 /**
  * 数组去重
@@ -149,7 +95,7 @@ const getSubPackages = (ctx, options) => {
         // 去除后缀名
         innerDir.forEach(inItem => {
           // 非页面文件夹过滤
-          if (['assets', 'components', 'css', 'interface', 'services', 'enums'].includes(inItem)) {
+          if (filterDirs.includes(inItem)) {
             return;
           }
           // 如果是文件夹则再次遍历
@@ -160,7 +106,7 @@ const getSubPackages = (ctx, options) => {
               if ( !deepInnerItem ) {
                 return
               }
-              if (['assets', 'components', 'component', 'css', 'interface', 'services', 'enums'].includes(deepInnerItem)) {
+              if (filterDirs.includes(deepInnerItem)) {
                 return;
               }
               const sliceRes = deepInnerItem.slice(0, deepInnerItem.indexOf('.'));
