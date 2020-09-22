@@ -60,10 +60,10 @@ const getSubPackages = (ctx, options) => {
     const {chalk} = ctx.helper;
     const {homeRoute, weapp, compSuffix, h5, subPackages: subPackagesConfig} = options;
     console.log(chalk.yellow('开始 '), '进入扫描分包插件');
-    let excluedeSubPackages: any[] = [];
+    let excludesSubPackages: any[] = [];
     let includesSubPackages: any[] = []
     if (subPackagesConfig && subPackagesConfig.excludes) {
-      excluedeSubPackages = subPackagesConfig.excludes;
+      excludesSubPackages = subPackagesConfig.excludes;
     }
     if (subPackagesConfig && subPackagesConfig.includes) {
       includesSubPackages = subPackagesConfig.includes;
@@ -79,8 +79,8 @@ const getSubPackages = (ctx, options) => {
       // 优先判断includes 如果没有includes则判断excludes
       if (includesSubPackages && includesSubPackages.length) {
         return includesSubPackages.includes(item)
-      } else if (excluedeSubPackages && excluedeSubPackages.length) {
-        return !['.DS_Store', ...excluedeSubPackages].includes(item)
+      } else if (excludesSubPackages && excludesSubPackages.length) {
+        return !['.DS_Store', ...excludesSubPackages].includes(item)
       }
     }
 
