@@ -108,7 +108,7 @@ const getSubPackages = (ctx, options) => {
                 return
               }
               // 过滤文件类型
-              if (!isFileSupported(inItem, compSuffix)) {
+              if (!isFileSupported(deepInnerItem, compSuffix)) {
                 return
               }
               if (filterDirs.includes(deepInnerItem)) {
