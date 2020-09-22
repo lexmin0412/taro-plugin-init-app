@@ -178,3 +178,20 @@ const plugins = [
   ],
 ]
 ```
+
+### 指定打包为页面/组件的文件类型
+
+通过 `compSuffix` 属性可指定需要扫描为页面/组件的文件后缀，未在此列的文件类型将会被过滤。
+
+例如，如果你只想把 tsx 结尾的文件扫描为页面/组件，`compSuffix` 配置项应该像如下这样：
+
+```js
+const plugins = [
+  [
+    'taro-plugin-init-app',
+    {
+      compSuffix: [ '.tsx' ],
+    }
+  ]
+]
+```

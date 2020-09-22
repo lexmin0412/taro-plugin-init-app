@@ -1,11 +1,13 @@
 const fs = require('fs')
 const chalk = require('chalk')
+import isFileSupported from './utils/fiterSuffix'
 
 /**
  * 扫描components文件夹生成index.ts 以支持一行代码写完组件引入
  * 示例：import { Card, TImage } from '~/components'
  */
-const checkComponent = () => {
+const checkComponent = (options) => {
+  const {compSuffix} = options
   console.log(chalk.yellow('开始 '), '进入扫描组件插件')
 
   if (fs.existsSync('./src/components/index.ts')) {
@@ -29,6 +31,10 @@ const checkComponent = () => {
     // 去除后缀名
     const newLines: any = []
     innerDir.forEach((inItem) => {
+      // 过滤文件类型
+      if (!isFileSupported(inItem, compSuffix)) {
+        return
+      }
       const sliceRes = inItem.slice(0, inItem.indexOf('.'))
       // 去重
       if (newLines.indexOf(sliceRes) === -1) {

@@ -1,4 +1,5 @@
 const fs = require('fs');
+import isFileSupported from './utils/fiterSuffix'
 
 /**
  * 判断一个path是否是文件夹
@@ -57,7 +58,7 @@ const handlePurifyArr = (weapp, h5, ctx, pages, subPackageItem, path) => {
 const getSubPackages = (ctx, options) => {
   return new Promise(resolve => {
     const {chalk} = ctx.helper;
-    const {homeRoute, weapp, h5, subPackages: subPackagesConfig} = options;
+    const {homeRoute, weapp, compSuffix, h5, subPackages: subPackagesConfig} = options;
     console.log(chalk.yellow('开始 '), '进入扫描分包插件');
     let excluedeSubPackages: any[] = [];
     let includesSubPackages: any[] = []
@@ -106,6 +107,10 @@ const getSubPackages = (ctx, options) => {
               if ( !deepInnerItem ) {
                 return
               }
+              // 过滤文件类型
+              if (!isFileSupported(inItem, compSuffix)) {
+                return
+              }
               if (filterDirs.includes(deepInnerItem)) {
                 return;
               }
@@ -115,6 +120,10 @@ const getSubPackages = (ctx, options) => {
             });
           }
           else {
+            // 过滤文件类型
+            if (!isFileSupported(inItem, compSuffix)) {
+              return
+            }
             const sliceRes = inItem.slice(0, inItem.indexOf('.'));
             handlePurifyArr(weapp, h5, ctx, subPackageItem.pages, item, `${sliceRes}`);
           }

@@ -16,6 +16,6 @@ export default (ctx, options) => {
       initApp(res[0], res[1])
     })
     // 获取所有组件生成文件名
-    getComponent()
+    getComponent(options)
   })
 }
