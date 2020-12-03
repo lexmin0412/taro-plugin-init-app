@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const chalk = require('chalk');
-const initApp = (pages, subPackages) => {
+const initApp = ({pages, subPackages}) => {
   let joinPages = '';
   pages.forEach((item, index) => {
     pages[index] = `

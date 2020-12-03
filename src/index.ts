@@ -13,7 +13,10 @@ export default (ctx, options) => {
       getPages(ctx, options),
       getSubPackages(ctx, options)
     ]).then((res)=>{
-      initApp(res[0], res[1])
+      initApp({
+        pages: res[0], 
+        subPackages: res[1]
+      })
     })
     // 获取所有组件生成文件名
     getComponent(options)

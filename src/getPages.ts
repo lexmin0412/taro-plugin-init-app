@@ -7,7 +7,7 @@ import isFileSupported from './utils/fiterSuffix'
 const getPages = (ctx, options) => {
   return new Promise(resolve => {
     const { chalk } = ctx.helper
-    const {homeRoute, compSuffix, weapp, h5 } = options
+    const {homeRoute, compSuffix, weapp, h5, subPackages } = options
     console.log(chalk.yellow('开始 '), '进入扫描页面插件')
 
     if (fs.existsSync('./src/pages/routes.js')) {
@@ -26,87 +26,91 @@ const pages = [
     const outerDirs = fs.readdirSync('./src/pages')
 
     outerDirs.forEach(item => {
-      // 跳过特殊文件夹
-      if (!['.DS_Store'].includes(item)) {
-        const innerDir = fs.readdirSync(`./src/pages/${item}`)
+      // 如果分包里面包含了当前文件夹 则不做遍历
+      if (!subPackages.includes.includes(`pages/${item}`)) {
 
-        // 去除后缀名
-        innerDir.forEach(inItem => {
-          // 过滤文件类型
-          if (!isFileSupported(inItem, compSuffix)) {
-            return
-          }
-          
-          const sliceRes = inItem.slice(0, inItem.indexOf('.'));
-          
-          // 去重
-          if (pages.indexOf(`pages/${item}/${sliceRes}`) === -1 &&
-            !['component'].includes(sliceRes)) {
-            // 拼接后的路由
-            const sliceResPageRoute = `pages/${item}/${sliceRes}`;
-            console.log(chalk.magentaBright('读取 '), `发现页面 ${sliceResPageRoute}`);
-						/**
-						 * 小程序配置处理
-						 */
-            if (weapp && ctx.runOpts.platform === 'weapp') {
-              if (weapp.pages) {
-                const {
-                  includes,
-                  excludes
-                } = weapp.pages;
-                // 有includePages时优先判断
-                if (includes) {
-                  if (includes.includes(sliceResPageRoute)) {
-                    pages.push(sliceResPageRoute);
-                    return;
-                  }
-                  return
-                }
-                if (excludes) {
-                  if (!excludes.includes(sliceResPageRoute)) {
-                    pages.push(sliceResPageRoute);
-                    return;
-                  }
-                  return
-                }
-                pages.push(sliceResPageRoute);
-                return;
-              }
-              pages.push(sliceResPageRoute);
-              return;
-            } else if (h5 && ctx.runOpts.platform === 'h5') {
-							/**
-							 * h5配置处理
-							 */
-              if (h5.pages) {
-                const {
-                  includes,
-                  excludes
-                } = h5.pages;
-                // 有includePages时优先判断
-                if (includes) {
-                  if (includes.includes(sliceResPageRoute)) {
-                    pages.push(sliceResPageRoute);
-                    return;
-                  }
-                  return
-                }
-                if (excludes) {
-                  if (!excludes.includes(sliceResPageRoute)) {
-                    pages.push(sliceResPageRoute);
-                    return;
-                  }
-                  return
-                }
-                pages.push(sliceResPageRoute);
-                return;
-              }
-              pages.push(sliceResPageRoute);
-              return;
+        // 跳过特殊文件夹
+        if (!['.DS_Store'].includes(item)) {
+          const innerDir = fs.readdirSync(`./src/pages/${item}`)
+
+          // 去除后缀名
+          innerDir.forEach(inItem => {
+            // 过滤文件类型
+            if (!isFileSupported(inItem, compSuffix)) {
+              return
             }
-            pages.push(sliceResPageRoute);
-          }
-        });
+
+            const sliceRes = inItem.slice(0, inItem.indexOf('.'));
+
+            // 去重
+            if (pages.indexOf(`pages/${item}/${sliceRes}`) === -1 &&
+              !['component'].includes(sliceRes)) {
+              // 拼接后的路由
+              const sliceResPageRoute = `pages/${item}/${sliceRes}`;
+              console.log(chalk.magentaBright('读取 '), `发现页面 ${sliceResPageRoute}`);
+              /**
+               * 小程序配置处理
+               */
+              if (weapp && ctx.runOpts.platform === 'weapp') {
+                if (weapp.pages) {
+                  const {
+                    includes,
+                    excludes
+                  } = weapp.pages;
+                  // 有includePages时优先判断
+                  if (includes) {
+                    if (includes.includes(sliceResPageRoute)) {
+                      pages.push(sliceResPageRoute);
+                      return;
+                    }
+                    return
+                  }
+                  if (excludes) {
+                    if (!excludes.includes(sliceResPageRoute)) {
+                      pages.push(sliceResPageRoute);
+                      return;
+                    }
+                    return
+                  }
+                  pages.push(sliceResPageRoute);
+                  return;
+                }
+                pages.push(sliceResPageRoute);
+                return;
+              } else if (h5 && ctx.runOpts.platform === 'h5') {
+                /**
+                 * h5配置处理
+                 */
+                if (h5.pages) {
+                  const {
+                    includes,
+                    excludes
+                  } = h5.pages;
+                  // 有includePages时优先判断
+                  if (includes) {
+                    if (includes.includes(sliceResPageRoute)) {
+                      pages.push(sliceResPageRoute);
+                      return;
+                    }
+                    return
+                  }
+                  if (excludes) {
+                    if (!excludes.includes(sliceResPageRoute)) {
+                      pages.push(sliceResPageRoute);
+                      return;
+                    }
+                    return
+                  }
+                  pages.push(sliceResPageRoute);
+                  return;
+                }
+                pages.push(sliceResPageRoute);
+                return;
+              }
+              pages.push(sliceResPageRoute);
+            }
+          });
+        }
       }
     })
 

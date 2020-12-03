@@ -78,13 +78,17 @@ const getSubPackages = (ctx, options) => {
     const testFunc = (item: any) => {
       // 优先判断includes 如果没有includes则判断excludes
       if (includesSubPackages && includesSubPackages.length) {
-        return includesSubPackages.includes(item)
-      } else if (excludesSubPackages && excludesSubPackages.length) {
+        if ( includesSubPackages.includes(item) ) {
+          return true
+        }
+      }
+      if (excludesSubPackages && excludesSubPackages.length) {
         return !['.DS_Store', ...excludesSubPackages].includes(item)
       }
+      return false
     }
 
-    outerDirs.forEach(item => {
+    outerDirs.concat(includesSubPackages).forEach(item => {
       // 跳过特殊文件夹
       if (testFunc(item) && isDirectory(`./src/${item}`)) {
         console.log(chalk.magentaBright('读取 '), `发现分包 ${item}`);
