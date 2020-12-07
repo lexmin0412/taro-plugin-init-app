@@ -12,16 +12,16 @@ const isDirectory = (path) => {
  * 需要过滤的文件夹
  */
 const filterDirs = [
-  'assets', 
-  'components', 
+  'assets',
+  'components',
   'constants',
   'component',
   'enums',
-  'css', 
+  'css',
   'interceptors',
   'interface',
   'lib',
-  'services', 
+  'services',
   'styles',
   'utils'
 ]
@@ -34,19 +34,13 @@ const filterDirs = [
  * @param {*} pages
  * @param {*} path
  */
-const handlePurifyArr = (weapp, h5, ctx, pages, subPackageItem, path) => {
+const handlePurifyArr = ({pages, subPackageItem, path}) => {
   // 去重
   if (pages.indexOf(path) === -1 && path) {
     // 拼接后的路由
     const sliceResPageRoute = path;
 
     subPackageItem = subPackageItem
-
-    if ((weapp && ctx.runOpts.platform === 'weapp') || (h5 && ctx.runOpts.platform === 'h5')) {
-      // handleMPFilter(weapp, ctx, pages, sliceResPageRoute)
-      // handleH5Filter(h5, ctx, pages, sliceResPageRoute)
-      // return
-    }
 
     pages.push(sliceResPageRoute);
   }
@@ -58,15 +52,33 @@ const handlePurifyArr = (weapp, h5, ctx, pages, subPackageItem, path) => {
 const getSubPackages = (ctx, options) => {
   return new Promise(resolve => {
     const {chalk} = ctx.helper;
-    const {homeRoute, weapp, compSuffix, h5, subPackages: subPackagesConfig} = options;
+    const {
+      homeRoute,
+      compSuffix,
+      subPkgs,
+      mainPkgs
+    } = options;
     console.log(chalk.yellow('开始 '), '进入扫描分包插件');
     let excludesSubPackages: any[] = [];
     let includesSubPackages: any[] = []
-    if (subPackagesConfig && subPackagesConfig.excludes) {
-      excludesSubPackages = subPackagesConfig.excludes;
+    if (subPkgs.excludeDirs) {
+      excludesSubPackages = subPkgs.excludeDirs;
     }
-    if (subPackagesConfig && subPackagesConfig.includes) {
-      includesSubPackages = subPackagesConfig.includes;
+    if (subPkgs.includeDirs) {
+      // 去重
+      subPkgs.includeDirs.forEach(element => {
+        if (!includesSubPackages.includes(element)) {
+          includesSubPackages.push(element)
+        }
+      });
+    }
+    if (mainPkgs.excludeDirs) {
+      // 去重
+      mainPkgs.excludeDirs.forEach(element => {
+        if (!includesSubPackages.includes(element)) {
+          includesSubPackages.push(element)
+        }
+      });
     }
     let indexLines = '';
     const subPackages: any[] = [];
@@ -78,7 +90,7 @@ const getSubPackages = (ctx, options) => {
     const testFunc = (item: any) => {
       // 优先判断includes 如果没有includes则判断excludes
       if (includesSubPackages && includesSubPackages.length) {
-        if ( includesSubPackages.includes(item) ) {
+        if (includesSubPackages.includes(item)) {
           return true
         }
       }
@@ -108,7 +120,7 @@ const getSubPackages = (ctx, options) => {
             const deepInnerDir = fs.readdirSync(`./src/${item}/${inItem}`);
             deepInnerDir.forEach(deepInnerItem => {
               // 判断deepInnerItem为空时不做任何处理
-              if ( !deepInnerItem ) {
+              if (!deepInnerItem) {
                 return
               }
               // 过滤文件类型
@@ -120,7 +132,11 @@ const getSubPackages = (ctx, options) => {
               }
               const sliceRes = deepInnerItem.slice(0, deepInnerItem.indexOf('.'));
               // 数组去重
-              handlePurifyArr(weapp, h5, ctx, subPackageItem.pages, item, `${inItem}/${sliceRes}`);
+              handlePurifyArr({
+                pages: subPackageItem.pages,
+                subPackageItem: item,
+                path: `${inItem}/${sliceRes}`
+              });
             });
           }
           else {
@@ -129,7 +145,11 @@ const getSubPackages = (ctx, options) => {
               return
             }
             const sliceRes = inItem.slice(0, inItem.indexOf('.'));
-            handlePurifyArr(weapp, h5, ctx, subPackageItem.pages, item, `${sliceRes}`);
+            handlePurifyArr({
+              pages: subPackageItem.pages,
+              subPackageItem: item,
+              path: `${sliceRes}`
+            });
           }
         });
         subPackages.push(subPackageItem);

@@ -7,7 +7,12 @@ import isFileSupported from './utils/fiterSuffix'
 const getPages = (ctx, options) => {
   return new Promise(resolve => {
     const { chalk } = ctx.helper
-    const {homeRoute, compSuffix, weapp, h5, subPackages } = options
+    const {
+      homeRoute, 
+      compSuffix,
+      mainPkgs,
+      subPkgs
+    } = options
     console.log(chalk.yellow('开始 '), '进入扫描页面插件')
 
     if (fs.existsSync('./src/pages/routes.js')) {
@@ -26,91 +31,47 @@ const pages = [
     const outerDirs = fs.readdirSync('./src/pages')
 
     outerDirs.forEach(item => {
-      // 如果分包里面包含了当前文件夹 则不做遍历
-      if (!subPackages.includes.includes(`pages/${item}`)) {
+      // 如果分包配置纳入 则过滤 
+      if (subPkgs.includeDirs.includes(`pages/${item}`)) {
+        console.log('分包包含了，不push')
+        return
+      }
+      // 如果主包配置过滤 则过滤
+      if (mainPkgs.excludeDirs.includes(`pages/${item}`) ) {
+        console.log('主包过滤了，不push')
+      }
 
-        // 跳过特殊文件夹
-        if (!['.DS_Store'].includes(item)) {
-          const innerDir = fs.readdirSync(`./src/pages/${item}`)
+      // 跳过特殊文件夹
+      if (!['.DS_Store'].includes(item)) {
+        const innerDir = fs.readdirSync(`./src/pages/${item}`)
 
-          // 去除后缀名
-          innerDir.forEach(inItem => {
-            // 过滤文件类型
-            if (!isFileSupported(inItem, compSuffix)) {
+        // 去除后缀名
+        innerDir.forEach(inItem => {
+          // 过滤文件类型
+          if (!isFileSupported(inItem, compSuffix)) {
+            return
+          }
+
+          const sliceRes = inItem.slice(0, inItem.indexOf('.'));
+
+          // 去重
+          if (pages.indexOf(`pages/${item}/${sliceRes}`) === -1 &&
+            !['component'].includes(sliceRes)) {
+            // 拼接后的路由
+            const sliceResPageRoute = `pages/${item}/${sliceRes}`;
+            console.log(chalk.magentaBright('读取 '), `发现页面 ${sliceResPageRoute}`);
+
+            // 过滤主包过滤配置
+            if (mainPkgs.excludePages && mainPkgs.excludePages.includes(sliceResPageRoute) ) {
               return
             }
-
-            const sliceRes = inItem.slice(0, inItem.indexOf('.'));
-
-            // 去重
-            if (pages.indexOf(`pages/${item}/${sliceRes}`) === -1 &&
-              !['component'].includes(sliceRes)) {
-              // 拼接后的路由
-              const sliceResPageRoute = `pages/${item}/${sliceRes}`;
-              console.log(chalk.magentaBright('读取 '), `发现页面 ${sliceResPageRoute}`);
-              /**
-               * 小程序配置处理
-               */
-              if (weapp && ctx.runOpts.platform === 'weapp') {
-                if (weapp.pages) {
-                  const {
-                    includes,
-                    excludes
-                  } = weapp.pages;
-                  // 有includePages时优先判断
-                  if (includes) {
-                    if (includes.includes(sliceResPageRoute)) {
-                      pages.push(sliceResPageRoute);
-                      return;
-                    }
-                    return
-                  }
-                  if (excludes) {
-                    if (!excludes.includes(sliceResPageRoute)) {
-                      pages.push(sliceResPageRoute);
-                      return;
-                    }
-                    return
-                  }
-                  pages.push(sliceResPageRoute);
-                  return;
-                }
-                pages.push(sliceResPageRoute);
-                return;
-              } else if (h5 && ctx.runOpts.platform === 'h5') {
-                /**
-                 * h5配置处理
-                 */
-                if (h5.pages) {
-                  const {
-                    includes,
-                    excludes
-                  } = h5.pages;
-                  // 有includePages时优先判断
-                  if (includes) {
-                    if (includes.includes(sliceResPageRoute)) {
-                      pages.push(sliceResPageRoute);
-                      return;
-                    }
-                    return
-                  }
-                  if (excludes) {
-                    if (!excludes.includes(sliceResPageRoute)) {
-                      pages.push(sliceResPageRoute);
-                      return;
-                    }
-                    return
-                  }
-                  pages.push(sliceResPageRoute);
-                  return;
-                }
-                pages.push(sliceResPageRoute);
-                return;
-              }
-              pages.push(sliceResPageRoute);
+            // 过滤分包纳入配置
+            if (subPkgs.includeDirs && subPkgs.includeDirs.includes(sliceResPageRoute)) {
+              return
             }
-          });
-        }
+            pages.push(sliceResPageRoute);
+          }
+        });
       }
     })
 
