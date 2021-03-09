@@ -8,7 +8,7 @@ const getPages = (ctx, options) => {
   return new Promise(resolve => {
     const { chalk } = ctx.helper
     const {
-      homeRoute, 
+      // homeRoute,
       compSuffix,
       mainPkgs,
       subPkgs
@@ -25,13 +25,13 @@ const getPages = (ctx, options) => {
  */
 
 const pages = [
-  '${homeRoute}',`
+  `
     const pages: any = []
 
     const outerDirs = fs.readdirSync('./src/pages')
 
     outerDirs.forEach(item => {
-      // 如果分包配置纳入 则过滤 
+      // 如果分包配置纳入 则过滤
       if (subPkgs.includeDirs.includes(`pages/${item}`)) {
         console.log('分包包含了，不push')
         return
@@ -76,12 +76,12 @@ const pages = [
     })
 
     pages.forEach(item => {
-      if (item !== homeRoute) {
+      // if (item !== homeRoute) {
         indexLines = indexLines
           ? `${indexLines}
   '${item}',`
           : `'${item}',`
-      }
+      // }
     })
 
     indexLines = `${indexLines}
@@ -90,13 +90,13 @@ const pages = [
 
 module.exports = pages`
 
-    let resolvePages = [
-      homeRoute
+    let resolvePages: any = [
+      // homeRoute
     ]
     pages.forEach(element => {
-      if (element !== homeRoute ) {
+      // if (element !== homeRoute ) {
         resolvePages.push(element)
-      }
+      // }
     });
 
     fs.writeFileSync('./src/pages/routes.js', indexLines)
